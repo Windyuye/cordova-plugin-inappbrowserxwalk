@@ -101,6 +101,10 @@ public class InAppBrowserXwalk extends CordovaPlugin {
 
                 String toolbarColor = "#FFFFFF";
                 int toolbarHeight = 80;
+                String closeButtonText = "";
+                int closeButtonSize = 0;
+                String closeButtonColor = "#000000";
+                boolean openHidden = false;
 
                 if(data != null && data.length() > 1) {
                     try {
@@ -111,6 +115,18 @@ public class InAppBrowserXwalk extends CordovaPlugin {
                             }
                             if(!options.isNull("toolbarHeight")) {
                                 toolbarHeight = options.getInt("toolbarHeight");
+                            }
+                            if(!options.isNull("closeButtonText")) {
+                                closeButtonText = options.getString("closeButtonText");
+                            }
+                            if(!options.isNull("closeButtonSize")) {
+                                closeButtonSize = options.getInt("closeButtonSize");
+                            }
+                            if(!options.isNull("closeButtonColor")) {
+                                closeButtonColor = options.getString("closeButtonColor");
+                            }
+                            if(!options.isNull("openHidden")) {
+                                openHidden = options.getBoolean("openHidden");
                             }
                         }
                     catch (JSONException ex) {
@@ -126,6 +142,19 @@ public class InAppBrowserXwalk extends CordovaPlugin {
                 toolbar.setLayoutParams(new RelativeLayout.LayoutParams(LayoutParams.MATCH_PARENT, toolbarHeight));
                 toolbar.setPadding(5, 5, 5, 5);
 
+                TextView closeButton = new TextView(cordova.getActivity());
+                closeButton.setText(closeButtonText);
+                closeButton.setTextSize(closeButtonSize);
+                closeButton.setTextColor(android.graphics.Color.parseColor(closeButtonColor));
+                closeButton.setTypeface(Typeface.create("sans-serif-thin", Typeface.NORMAL));
+                toolbar.addView(closeButton);
+
+                closeButton.setOnClickListener(new View.OnClickListener() {
+                     public void onClick(View v) {
+                         closeBrowser();
+                     }
+                 });
+
                 main.addView(toolbar);
                 main.addView(xWalkWebView);
 
@@ -134,6 +163,9 @@ public class InAppBrowserXwalk extends CordovaPlugin {
                 dialog.setCancelable(true);
                 LayoutParams layoutParams = new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT);
                 dialog.addContentView(main, layoutParams);
+                if(!openHidden) {
+                    dialog.show();
+                }
             }
         });
     }
